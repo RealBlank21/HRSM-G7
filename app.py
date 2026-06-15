@@ -1,25 +1,16 @@
 import os
 from flask import Flask
-from supabase import create_client, Client
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.db import get_all_entries
 
 app = Flask(__name__)
 
-supabase: Client = create_client(
-    os.environ.get("SUPABASE_URL"),
-    os.environ.get("SUPABASE_KEY")
-)
-
 @app.route('/')
 def index():
-    response = supabase.table('user').select("*").execute()
-    users = response.data
+    users = get_all_entries('user')
 
     html = '<h1>User</h1><ul>'
     for user in users:
-        html += f'<li>{user["user_type"]} |{user["username"]}</li>'
+        html += f'<li>{user["user_type"]} | {user["username"]}</li>'
     html += '</ul>'
 
     return html
