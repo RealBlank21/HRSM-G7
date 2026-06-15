@@ -19,11 +19,11 @@ Ensure Python 3.x is installed on your system.
 
 2. Set up a Virtual Environment
 Run the following command to create a virtual environment:
-```python -m venv venv```
+`python -m venv venv`
 
 Activate it based on your OS:
-- Windows (CMD): venv\Scripts\activate.bat
-- Windows (PowerShell): .\venv\Scripts\Activate.ps1
+- Windows (CMD): `venv\Scripts\activate.bat`
+- Windows (PowerShell): `.\venv\Scripts\Activate.ps1`
 
 3. Install Dependencies
 Run the install command inside your activated virtual environment:
