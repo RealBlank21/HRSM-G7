@@ -14,12 +14,12 @@ supabase: Client = create_client(
 
 @app.route('/')
 def index():
-    response = supabase.table('todos').select("*").execute()
-    todos = response.data
+    response = supabase.table('user').select("*").execute()
+    users = response.data
 
-    html = '<h1>Todos</h1><ul>'
-    for todo in todos:
-        html += f'<li>{todo["name"]}</li>'
+    html = '<h1>User</h1><ul>'
+    for user in users:
+        html += f'<li>{user["user_type"]} |{user["username"]}</li>'
     html += '</ul>'
 
     return html
