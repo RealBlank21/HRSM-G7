@@ -303,7 +303,140 @@
       </main> -->
 
       <main class="dashboard-content">
-        <div class="test">test</div>
+        <div class="container-fluid px-3 px-lg-4 py-4">
+          
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h1 class="h4 mb-0 fw-semibold">Hello John Doe,</h1>
+            <span class="fw-semibold text-muted">Monday, 8 June 2026</span>
+          </div>
+
+          <style>
+            .feedback-card {
+              background-color: #ffffff;
+              border: 1px solid #dee2e6;
+              color: #212529;
+            }
+            .feedback-card .header-title { color: #1e293b; }
+            .feedback-card .subtitle-text { color: #64748b; }
+            .feedback-card .field-label { color: #334155; }
+            .feedback-card .upload-zone { background-color: #f8fafc; border-color: #cbd5e1; }
+            .feedback-card .upload-text { color: #334155; }
+
+            /* Automatically switches to Navy Blue when parent has dark mode activated */
+            [data-bs-theme="dark"] .feedback-card,
+            .dark-mode .feedback-card {
+              background-color: #1e293b !important;
+              border: 1px solid #334155 !important;
+              color: #f8fafc;
+            }
+            [data-bs-theme="dark"] .feedback-card .header-title,
+            .dark-mode .feedback-card .header-title { color: #f8fafc !important; }
+            
+            [data-bs-theme="dark"] .feedback-card .subtitle-text,
+            .dark-mode .feedback-card .subtitle-text { color: #94a3b8 !important; }
+
+            [data-bs-theme="dark"] .feedback-card .field-label,
+            .dark-mode .feedback-card .field-label { color: #cbd5e1 !important; }
+
+            [data-bs-theme="dark"] .feedback-card .upload-zone,
+            .dark-mode .feedback-card .upload-zone { background-color: #334155 !important; border-color: #475569 !important; }
+
+            [data-bs-theme="dark"] .feedback-card .upload-text,
+            .dark-mode .feedback-card .upload-text { color: #f8fafc !important; }
+          </style>
+
+          <div class="card border-0 shadow-lg feedback-card" style="border-radius: 16px;">
+            <div class="card-body p-4 p-md-5">
+              <h2 class="h4 fw-bold mb-1 header-title">Give Company Feedback</h2>
+              <p class="small mb-4 subtitle-text">Your feedback help us build a better workplace. Share your thoughts, suggestions, or concerns regarding company behaviour</p>
+
+              <form id="feedbackForm" onsubmit="event.preventDefault();">
+                <div class="mb-4">
+                  <label for="feedbackCategory" class="form-label fw-bold small mb-1 field-label">Feedback Category <span class="text-danger">*</span></label>
+                  <select class="form-select bg-white py-2 border" id="feedbackCategory" required style="color: #334155;">
+                    <option value="" disabled selected hidden>Select a category (e.g., Workplace Culture, Management, Facilities)</option>
+                    <option value="culture">Workplace Culture</option>
+                    <option value="management">Management</option>
+                    <option value="facilities">Facilities</option>
+                  </select>
+                </div>
+
+                <div class="mb-4">
+                  <label for="feedbackDescription" class="form-label fw-bold small mb-1 field-label">Feedback Description <span class="text-danger">*</span></label>
+                  <textarea class="form-control bg-white border" id="feedbackDescription" rows="5" placeholder="Please type your feedback regarding company behaviour here..." required style="color: #334155;"></textarea>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-bold small mb-1 field-label">Supporting Documents (Optional)</label>
+                  <div class="border rounded-3 p-4 text-center position-relative upload-zone" style="border-style: dashed !important;">
+                    <input type="file" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor: pointer;" id="supportingDocs" multiple>
+                    <i class="bi bi-upload fs-3 mb-2 d-block text-primary"></i>
+                    <span class="fw-semibold d-block mb-1 upload-text">Click to upload or drag and drop</span>
+                    <span class="small text-muted">PDF, JPEG, PNG up to 5MB per file</span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
+                  <div class="form-check align-items-start d-flex gap-2 ps-0">
+                    <input class="form-check-input ms-0 flex-shrink-0" type="checkbox" id="anonymousSubmit" style="width: 1.5rem; height: 1.5rem; cursor: pointer;">
+                    <div class="ms-1">
+                      <label class="form-check-input-label fw-bold d-block mb-0 field-label" for="anonymousSubmit" style="cursor: pointer; line-height: 1.2;">
+                        Submit Anonymously
+                      </label>
+                      <span class="d-block text-muted" style="font-size: 0.8rem; line-height: 1.3;">Your identity details will be permanently stripped from this record to ensure strict confidentiality</span>
+                    </div>
+                  </div>
+
+                  <div class="text-end">
+                    <button type="button" class="btn btn-success px-5 fw-bold text-white rounded-3 py-2 shadow" data-bs-toggle="modal" data-bs-target="#confirmModal" style="background-color: #25c866; border-color: #25c866; min-width: 150px;">SUBMIT</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-0 overflow-hidden shadow-lg feedback-card" style="border-radius: 12px;">
+                <div class="modal-header border-0 px-4 py-3" style="background-color: rgba(0,0,0,0.05);">
+                  <h5 class="modal-title h6 fw-bold mb-0 header-title" id="confirmModalLabel">Submit Feedback Form?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4 p-md-5">
+                  <div class="mb-4">
+                    <i class="bi bi-question-circle subtitle-text" style="font-size: 4rem;"></i>
+                  </div>
+                  <h6 class="fw-bold mb-4 header-title">Are you sure you want to submit?</h6>
+                  <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn text-white fw-bold px-4 py-2 rounded-3" data-bs-dismiss="modal" style="background-color: #fa541c; min-width: 120px;">CANCEL</button>
+                    <button type="button" class="btn text-white fw-bold px-4 py-2 rounded-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#successModal" style="background-color: #25c866; min-width: 120px;">SUBMIT</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-0 overflow-hidden shadow-lg feedback-card" style="border-radius: 12px;">
+                <div class="modal-header border-0 px-4 py-3" style="background-color: rgba(0,0,0,0.05);">
+                  <h5 class="modal-title h6 fw-bold mb-0 header-title" id="successModalLabel">Feedback Sent !</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4 p-md-5">
+                  <div class="mb-4">
+                    <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #25c866;"></i>
+                  </div>
+                  <h6 class="fw-semibold mb-4 header-title">Your feedback has successfully submitted!</h6>
+                  <div class="d-flex justify-content-center">
+                    <button type="button" class="btn text-white fw-bold px-5 py-2 rounded-3" data-bs-dismiss="modal" style="background-color: #475569; min-width: 140px;">OK</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </main>
 
     </div>
