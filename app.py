@@ -70,6 +70,11 @@ def claimUI():
         return redirect(url_for('index'))
     return render_template('employee-claim.html')
 
+@app.route('/claim/add')
+def claim_add():
+    if 'employee_id' not in session:
+        return redirect(url_for('index'))
+    return render_template('employee-claim-form.html')
 @app.route('/payroll')
 def payrollUI():
     if 'employee_id' not in session:

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="adminHMD professional admin dashboard template">
+    <title>Expense Claim Form | adminHMD</title>
+
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/vendors/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+    <style>
+        .claim-form-note {
+            color: #8b95a8;
+            font-size: .9rem;
+            margin-bottom: 1.5rem;
+        }
+        .claim-form-note strong { color: #fff; }
+
+        .claim-form-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .claim-form-header {
+            margin-bottom: 1.25rem;
+        }
+        .claim-form-title {
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: .02em;
+            margin-bottom: .15rem;
+        }
+        .claim-form-subtitle {
+            color: #8b95a8;
+            font-size: .85rem;
+        }
+
+        .claim-form-panel .form-label {
+            color: #cbd5e1;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: .4rem;
+        }
+
+        .claim-form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+        }
+        .claim-form-control::placeholder { color: #6b7385; }
+        .claim-form-control:focus {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: #22c55e;
+            box-shadow: 0 0 0 .2rem rgba(34, 197, 94, .15);
+            color: #fff;
+        }
+        .claim-form-control:disabled {
+            background: rgba(255, 255, 255, .03);
+            color: #8b95a8;
+        }
+        select.claim-form-control option { color: #1a1a1a; }
+
+        .claim-upload-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .4rem;
+            border: 1px dashed rgba(255, 255, 255, .2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .02);
+            padding: 2.25rem 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background .15s ease, border-color .15s ease;
+        }
+        .claim-upload-zone:hover,
+        .claim-upload-zone.is-dragover {
+            background: rgba(255, 255, 255, .04);
+            border-color: rgba(34, 197, 94, .5);
+        }
+        .claim-upload-icon { font-size: 1.6rem; color: #8b95a8; }
+        .claim-upload-text { color: #cbd5e1; font-weight: 600; font-size: .9rem; }
+        .claim-upload-hint { color: #6b7385; font-size: .75rem; }
+
+        .btn-claim-submit {
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: .85rem;
+            letter-spacing: .03em;
+            padding: .6rem 2.25rem;
+        }
+        .btn-claim-submit:hover { background: #16a34a; color: #fff; }
+    </style>
+</head>
+
+<body>
+<div class="admin-shell">
+    <div class="sidebar-backdrop" data-sidebar-close></div>
+
+    <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+        <div class="sidebar-header d-flex align-items-center justify-content-center">
+            <a class="brand-mark" href="/dashboard" aria-label="adminHMD dashboard">
+          <span class="brand-copy">
+            <span class="brand-title">HRMS <span class="fw-light">EMPLOYEE</span></span>
+          </span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav h-100 d-flex flex-column justify-content-between">
+            <a class="nav-link" href="/dashboard" aria-current="page">
+                <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-link" href="/leave">
+                <span class="nav-icon"><i class="bi bi-calendar-x" aria-hidden="true"></i></span>
+                <span class="nav-text">Leave</span>
+            </a>
+            <a class="nav-link active" href="/claim">
+                <span class="nav-icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></span>
+                <span class="nav-text">Claim</span>
+            </a>
+            <a class="nav-link" href="/payroll">
+                <span class="nav-icon"><i class="bi bi-wallet2" aria-hidden="true"></i></span>
+                <span class="nav-text">Payroll</span>
+            </a>
+            <a class="nav-link" href="/feedback">
+                <span class="nav-icon"><i class="bi bi-chat-right-dots" aria-hidden="true"></i></span>
+                <span class="nav-text">Feedback</span>
+            </a>
+
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-link w-100">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    <span class="sidebar-footer-text">Log Out</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="admin-main">
+        <nav class="navbar admin-navbar navbar-expand bg-white">
+            <div class="container-fluid px-3 px-lg-4">
+                <div class="navbar-actions ms-auto">
+                    <div class="d-flex flex-column">
+                        <span class="name fw-bold">John Doe</span>
+                        <span class="role text-muted">Employee</span>
+                    </div>
+
+                    <div class="avatar-img fs-2 mx-2">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+
+                    <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+                        <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-content">
+
+            <div class="container-fluid px-3 px-lg-4 py-4">
+
+                <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
+                    <h4 class="text-white mb-0">Hello Muhammad Fawwaz,</h4>
+                    <span class="text-muted">Monday, 8 June 2026</span>
+                </div>
+
+                <p class="claim-form-note">You have <strong>2</strong> remaining claim submission and <strong>RM 400</strong> balance limit.</p>
+
+                <form class="claim-form-panel needs-validation" id="claimForm" novalidate>
+                    <div class="claim-form-header">
+                        <h6 class="claim-form-title">EXPENSE CLAIM FORM</h6>
+                        <span class="claim-form-subtitle">Please answer all the blank</span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" for="claimNo">No.</label>
+                            <input class="form-control claim-form-control" id="claimNo" value="4" disabled>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label class="form-label" for="claimType">Claim Type <span class="text-danger">*</span></label>
+                            <select class="form-select claim-form-control" id="claimType" required>
+                                <option>Medical Expense</option>
+                                <option>Travel Expense</option>
+                                <option>Meal Expense</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label" for="claimDate">Claim Date <span class="text-danger">*</span></label>
+                            <input class="form-control claim-form-control" id="claimDate" type="date" value="2026-06-09" required>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label" for="claimAmount">Claim Amount <span class="text-danger">*</span></label>
+                            <input class="form-control claim-form-control" id="claimAmount" type="text" placeholder="RM 999.99" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="claimDescription">Claim Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control claim-form-control" id="claimDescription" rows="4" placeholder="Enter claim purpose and expense details." required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="claimDocuments">Supporting Documents <span class="text-danger">*</span></label>
+                        <label class="claim-upload-zone" for="claimDocuments" id="claimUploadZone">
+                            <i class="bi bi-upload claim-upload-icon" aria-hidden="true"></i>
+                            <span class="claim-upload-text" id="claimUploadText">Click to upload or drag and drop</span>
+                            <span class="claim-upload-hint">PDF, JPEG, PNG up to 5MB per file</span>
+                        </label>
+                        <input class="d-none" id="claimDocuments" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-claim-submit" type="submit">SUBMIT</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<script src="../static/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/scripts.js"></script>
+<script>
+    (function () {
+        var dropZone = document.getElementById('claimUploadZone');
+        var fileInput = document.getElementById('claimDocuments');
+        var uploadText = document.getElementById('claimUploadText');
+
+        function updateLabel(files) {
+            if (!files || !files.length) {
+                uploadText.textContent = 'Click to upload or drag and drop';
+                return;
+            }
+            uploadText.textContent = files.length === 1
+                ? files[0].name
+                : files.length + ' files selected';
+        }
+
+        fileInput.addEventListener('change', function () {
+            updateLabel(fileInput.files);
+        });
+
+        ['dragover', 'dragenter'].forEach(function (evt) {
+            dropZone.addEventListener(evt, function (e) {
+                e.preventDefault();
+                dropZone.classList.add('is-dragover');
+            });
+        });
+
+        ['dragleave', 'dragend', 'drop'].forEach(function (evt) {
+            dropZone.addEventListener(evt, function () {
+                dropZone.classList.remove('is-dragover');
+            });
+        });
+
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            if (e.dataTransfer && e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateLabel(fileInput.files);
+            }
+        });
+
+        // TODO: replace with your real submit handler, e.g. posting FormData to your backend
+        document.getElementById('claimForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            console.log('Submitting claim form...');
+        });
+    })();
+</script>
+</body>
+</html>
