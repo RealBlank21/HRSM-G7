@@ -41,7 +41,11 @@ def admin_dashboardUI():
     if 'employee_id' not in session or session.get('department') != 'HR':
         return redirect(url_for('index'))
     return render_template('admin-dashboard.html')
-
+@app.route('/admin/claim')
+def admin_claimUI():
+    if 'employee_id' not in session or session.get('department') != 'HR':
+        return redirect(url_for('index'))
+    return render_template('admin-claim.html')
 @app.route('/leave')
 def leaveUI():
     if 'employee_id' not in session:

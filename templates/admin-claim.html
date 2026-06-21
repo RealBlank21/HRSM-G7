@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="adminHMD professional admin dashboard template">
+  <title>Claims | adminHMD</title>
+
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="../static/css/styles.css">
+
+  <style>
+    :root {
+      --hr-orange: #FF5722;
+      --hr-orange-dark: #E64A19;
+      --hr-orange-light: #FCC9B9;
+      --hr-panel-bg: #F8C6B6;
+      --hr-pagination-bg: #FAA58A;
+      --hr-page-bg: #F5F5F5;
+      --hr-text-dark: #1F2937;
+      --hr-text-gray: #8B95A8;
+    }
+
+    /* ---- Force light theme for this page, regardless of the dark admin defaults ---- */
+    body, .admin-shell, .admin-main, .dashboard-content {
+      background-color: var(--hr-page-bg) !important;
+    }
+
+    .admin-sidebar {
+      background-color: #ffffff !important;
+      border-right: 1px solid #ececec;
+    }
+
+    .sidebar-header {
+      border-bottom: 1px solid #ececec;
+      padding: 1.5rem 0 1.25rem;
+    }
+    .brand-title {
+      color: #111827 !important;
+      font-size: 1.15rem;
+    }
+    .brand-title .fw-light {
+      color: #4b5563 !important;
+      font-weight: 400 !important;
+    }
+
+    .sidebar-nav .nav-link {
+      color: #3e3e3e !important;
+      font-size: .92rem;
+      font-weight: 500;
+      border-radius: 8px;
+      margin: .15rem .9rem;
+      padding: .65rem .9rem;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+    .sidebar-nav .nav-link .nav-icon {
+      color: #9aa1ad;
+      font-size: 1.05rem;
+      display: inline-flex;
+    }
+    .sidebar-nav .nav-link:hover {
+      background-color: rgba(255, 87, 34, .06);
+      color: #1f2937 !important;
+    }
+    .sidebar-nav .nav-link.active {
+      background-color: var(--hr-orange-light) !important;
+      border: 1px solid rgba(255, 87, 34, .35);
+      color: #1f2937 !important;
+      font-weight: 700;
+    }
+    .sidebar-nav .nav-link.active .nav-icon {
+      color: #c2410c;
+    }
+    .sidebar-footer {
+      border-top: 1px solid #ececec;
+      padding-top: 1rem;
+    }
+    .sidebar-footer .nav-link {
+      color: #3e3e3e !important;
+    }
+
+    /* ---- Top navbar ---- */
+    .admin-navbar {
+      border-bottom: 1px solid #ececec;
+    }
+    .admin-navbar .name {
+      color: #111827;
+      font-size: .9rem;
+    }
+    .admin-navbar .role {
+      font-size: .78rem;
+    }
+    .admin-navbar .avatar-img {
+      color: #cbd2dc;
+    }
+
+    .page-heading {
+      color: #111827 !important;
+    }
+    .page-date {
+      color: #8b95a8;
+      font-size: .95rem;
+    }
+
+    /* ---- Claims panel (the orange themed "side" panel) ---- */
+    .claims-panel {
+      background: var(--hr-panel-bg);
+      border: 2px solid var(--hr-orange);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+    }
+    .claims-panel-title {
+      color: #111827;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      margin-bottom: .2rem;
+    }
+    .claims-panel-subtitle {
+      color: #5c4a44;
+      font-size: .85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .claims-table {
+      margin-bottom: 0;
+    }
+    .claims-table thead th {
+      color: #6b5650;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(0, 0, 0, .12);
+      padding-bottom: .65rem;
+      white-space: nowrap;
+    }
+    .claims-table tbody td {
+      border-bottom: 1px solid rgba(0, 0, 0, .08);
+      padding: .8rem .5rem;
+      font-size: .88rem;
+      color: #3a2f2c;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .claims-table tbody td.col-desc {
+      white-space: normal;
+      color: #5c4a44;
+    }
+    .claims-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: .32rem .9rem;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .status-approved { background: #178754; }
+    .status-pending  { background: #FFC107; color: #2a2105; }
+    .status-rejected { background: #DC2626; }
+
+    .btn-view {
+      background: var(--hr-orange);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .35rem 1.1rem;
+    }
+    .btn-view:hover {
+      background: var(--hr-orange-dark);
+      color: #fff;
+    }
+
+    .claims-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.1rem;
+    }
+    .claims-footer-text {
+      color: #6b5650;
+      font-size: .82rem;
+    }
+
+    .pagination-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .15rem;
+      background: var(--hr-pagination-bg);
+      border-radius: 20px;
+      padding: .3rem .35rem;
+    }
+    .pagination-pill button {
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, .85);
+      font-size: .78rem;
+      font-weight: 600;
+      padding: .3rem .7rem;
+      border-radius: 16px;
+    }
+    .pagination-pill button.active {
+      background: var(--hr-orange);
+      color: #fff;
+      font-weight: 700;
+    }
+    .pagination-pill button:hover:not(.active) {
+      color: #fff;
+    }
+
+    /* ---- View claim modal ---- */
+    #viewClaimModal .modal-content {
+      background: #ffffff;
+      border: none;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .modal-header-view {
+      background: var(--hr-orange);
+      border-bottom: none;
+      padding: 1rem 1.25rem;
+    }
+    .modal-header-view .modal-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    #viewClaimModal .modal-body {
+      padding: 1.25rem 1.5rem;
+    }
+    .view-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: .55rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: .9rem;
+    }
+    .view-detail-row span:first-child {
+      color: #8b95a8;
+      font-weight: 600;
+    }
+    .view-detail-row span:last-child {
+      color: #1f2937;
+      font-weight: 600;
+      text-align: right;
+    }
+    #viewClaimModal .modal-footer {
+      border-top: none;
+      padding: .75rem 1.5rem 1.25rem;
+    }
+    .btn-reject {
+      background: #DC2626;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: .5rem 1.4rem;
+    }
+    .btn-reject:hover { background: #c41f1f; color: #fff; }
+    .btn-approve {
+      background: #178754;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: .5rem 1.4rem;
+    }
+    .btn-approve:hover { background: #136a42; color: #fff; }
+  </style>
+</head>
+
+<body>
+<div class="admin-shell">
+  <div class="sidebar-backdrop" data-sidebar-close></div>
+
+  <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+    <div class="sidebar-header d-flex align-items-center justify-content-center">
+      <a class="brand-mark" href="/dashboard" aria-label="adminHMD dashboard">
+          <span class="brand-copy">
+            <span class="brand-title">HRMS <span class="fw-light">Admin</span></span>
+          </span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav h-100 d-flex flex-column justify-content-between">
+      <div>
+        <a class="nav-link" href="/attendance">
+          <span class="nav-icon"><i class="bi bi-person-check" aria-hidden="true"></i></span>
+          <span class="nav-text">Attendance</span>
+        </a>
+        <a class="nav-link" href="/payroll">
+          <span class="nav-icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></span>
+          <span class="nav-text">Payroll</span>
+        </a>
+        <a class="nav-link" href="/leave">
+          <span class="nav-icon"><i class="bi bi-calendar-x" aria-hidden="true"></i></span>
+          <span class="nav-text">Leave</span>
+        </a>
+        <a class="nav-link" href="/feedback">
+          <span class="nav-icon"><i class="bi bi-chat-square-text" aria-hidden="true"></i></span>
+          <span class="nav-text">Feedback</span>
+        </a>
+        <a class="nav-link active" href="/claim" aria-current="page">
+          <span class="nav-icon"><i class="bi bi-receipt" aria-hidden="true"></i></span>
+          <span class="nav-text">Claims</span>
+        </a>
+        <a class="nav-link" href="/employee">
+          <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+          <span class="nav-text">Employee</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <a href="/logout" class="nav-link w-100">
+          <span class="nav-icon"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></span>
+          <span class="nav-text">Log Out</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <nav class="navbar admin-navbar navbar-expand bg-white">
+      <div class="container-fluid px-3 px-lg-4">
+        <div class="navbar-actions ms-auto d-flex align-items-center">
+          <div class="d-flex flex-column text-end me-2">
+            <span class="name fw-bold">Name</span>
+            <span class="role text-muted">Employee</span>
+          </div>
+
+          <div class="avatar-img fs-2 mx-2">
+            <i class="bi bi-person-circle"></i>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="dashboard-content">
+
+      <div class="container-fluid px-3 px-lg-4 py-4">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+          <h4 class="page-heading mb-0">Hello HR Administrator</h4>
+          <span class="page-date">Monday, 8 June 2026</span>
+        </div>
+
+        <div class="claims-panel">
+          <h6 class="claims-panel-title">Expense Claim</h6>
+          <p class="claims-panel-subtitle">Approve or reject employee expense claim.</p>
+
+          <div class="table-responsive">
+            <table class="table claims-table">
+              <thead>
+              <tr>
+                <th>No.</th>
+                <th>Employee Name</th>
+                <th>Claim Type</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>1</td>
+                <td>Fawwaz</td>
+                <td>Medical Claim</td>
+                <td class="col-desc">Medical check-up and ...</td>
+                <td>June 16, 2026</td>
+                <td>RM 100.00</td>
+                <td><span class="status-badge status-approved">Approved</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="1">View</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Fawwaz</td>
+                <td>Travel Claim</td>
+                <td class="col-desc">Transportation expenses for ...</td>
+                <td>June 12, 2026</td>
+                <td>RM 99.00</td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="2">View</button></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Fawwaz</td>
+                <td>Meal Claim</td>
+                <td class="col-desc">Meal expenses during ...</td>
+                <td>June 12, 2026</td>
+                <td>RM 85.00</td>
+                <td><span class="status-badge status-rejected">Rejected</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="3">View</button></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Nuqman Irfan</td>
+                <td>Medical Claim</td>
+                <td class="col-desc">Dental treatment for ...</td>
+                <td>June 17, 2026</td>
+                <td>RM 220.00</td>
+                <td><span class="status-badge status-approved">Approved</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="4">View</button></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Azhan</td>
+                <td>Travel Claim</td>
+                <td class="col-desc">Fuel and toll expense for ...</td>
+                <td>June 18, 2026</td>
+                <td>RM 150.00</td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="5">View</button></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Izzad</td>
+                <td>Meal Claim</td>
+                <td class="col-desc">Team lunch during ...</td>
+                <td>June 20, 2026</td>
+                <td>RM 75.00</td>
+                <td><span class="status-badge status-approved">Approved</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="6">View</button></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Adli</td>
+                <td>Travel Claim</td>
+                <td class="col-desc">Transportation expenses for ...</td>
+                <td>June 21, 2026</td>
+                <td>RM 210.00</td>
+                <td><span class="status-badge status-rejected">Rejected</span></td>
+                <td><button class="btn btn-view" type="button" data-bs-toggle="modal" data-bs-target="#viewClaimModal" data-claim-id="7">View</button></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="claims-footer">
+            <span class="claims-footer-text">Showing 1 to 7 of 20 leave applications</span>
+            <div class="pagination-pill">
+              <button type="button">Previous</button>
+              <button type="button" class="active">1</button>
+              <button type="button">2</button>
+              <button type="button">3</button>
+              <button type="button">Next</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+</div>
+
+
+<div class="modal fade" id="viewClaimModal" tabindex="-1" aria-labelledby="viewClaimModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header modal-header-view">
+        <h5 class="modal-title" id="viewClaimModalLabel">Claim Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="view-detail-row"><span>Employee Name</span><span id="viewEmployeeName">-</span></div>
+        <div class="view-detail-row"><span>Claim Type</span><span id="viewClaimType">-</span></div>
+        <div class="view-detail-row"><span>Description</span><span id="viewDescription">-</span></div>
+        <div class="view-detail-row"><span>Date</span><span id="viewDate">-</span></div>
+        <div class="view-detail-row"><span>Amount</span><span id="viewAmount">-</span></div>
+        <div class="view-detail-row"><span>Status</span><span id="viewStatus">-</span></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-reject" id="rejectClaimBtn">Reject</button>
+        <button type="button" class="btn-approve" id="approveClaimBtn">Approve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../static/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/scripts.js"></script>
+<script>
+  (function () {
+    var claimsData = {
+      1: { name: 'Fawwaz', type: 'Medical Claim', desc: 'Medical check-up and consultation', date: 'June 16, 2026', amount: 'RM 100.00', status: 'Approved' },
+      2: { name: 'Fawwaz', type: 'Travel Claim', desc: 'Transportation expenses for client visit', date: 'June 12, 2026', amount: 'RM 99.00', status: 'Pending' },
+      3: { name: 'Fawwaz', type: 'Meal Claim', desc: 'Meal expenses during overtime', date: 'June 12, 2026', amount: 'RM 85.00', status: 'Rejected' },
+      4: { name: 'Nuqman Irfan', type: 'Medical Claim', desc: 'Dental treatment for employee', date: 'June 17, 2026', amount: 'RM 220.00', status: 'Approved' },
+      5: { name: 'Azhan', type: 'Travel Claim', desc: 'Fuel and toll expense for site visit', date: 'June 18, 2026', amount: 'RM 150.00', status: 'Pending' },
+      6: { name: 'Izzad', type: 'Meal Claim', desc: 'Team lunch during project meeting', date: 'June 20, 2026', amount: 'RM 75.00', status: 'Approved' },
+      7: { name: 'Adli', type: 'Travel Claim', desc: 'Transportation expenses for client visit', date: 'June 21, 2026', amount: 'RM 210.00', status: 'Rejected' }
+    };
+
+    var viewModalEl = document.getElementById('viewClaimModal');
+
+    viewModalEl.addEventListener('show.bs.modal', function (event) {
+      var triggerBtn = event.relatedTarget;
+      var claimId = triggerBtn ? triggerBtn.getAttribute('data-claim-id') : null;
+      var data = claimsData[claimId];
+      if (!data) return;
+
+      document.getElementById('viewEmployeeName').textContent = data.name;
+      document.getElementById('viewClaimType').textContent = data.type;
+      document.getElementById('viewDescription').textContent = data.desc;
+      document.getElementById('viewDate').textContent = data.date;
+      document.getElementById('viewAmount').textContent = data.amount;
+      document.getElementById('viewStatus').textContent = data.status;
+      viewModalEl.setAttribute('data-current-claim-id', claimId);
+    });
+
+    document.getElementById('approveClaimBtn').addEventListener('click', function () {
+      var claimId = viewModalEl.getAttribute('data-current-claim-id');
+      console.log('Approving claim id:', claimId);
+      bootstrap.Modal.getInstance(viewModalEl).hide();
+    });
+
+    document.getElementById('rejectClaimBtn').addEventListener('click', function () {
+      var claimId = viewModalEl.getAttribute('data-current-claim-id');
+      console.log('Rejecting claim id:', claimId);
+      bootstrap.Modal.getInstance(viewModalEl).hide();
+    });
+  })();
+</script>
+</body>
+</html>
