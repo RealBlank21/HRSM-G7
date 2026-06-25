@@ -17,7 +17,7 @@ def get_all_entries(table_name: str):
         return []
 
 def verify_login(email: str, password: str):
-    try:
+    try:    
         response = supabase.table('employee').select('*').eq('email', email).eq('password', password).execute()
         if len(response.data) > 0:
             return response.data[0]

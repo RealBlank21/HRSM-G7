@@ -26,7 +26,7 @@
           <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
               <h1 class="h4 mb-0 fw-semibold">Leave Management</h1>
-              <span class="text-muted small">You have {{ total_remaining_balance }} days remaining leave balance.</span>
+              <span class="text-muted small">You have <b>{{ total_remaining_balance }} days</b> remaining leave balance.</span>
             </div>
           </div>
 
@@ -70,7 +70,7 @@
                     </td>
                     <td>{{ leave.submitted_date }}</td>
                     <td class="text-end pe-4">
-                      <button class="btn btn-light btn-sm">View</button>
+                      <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#viewLeaveModal">View</button>
                     </td>
                   </tr>
                   {% else %}
@@ -98,7 +98,7 @@
         
         <form action="/leave/apply" method="POST" enctype="multipart/form-data">
           <div class="modal-body p-4">
-            
+            <p class="text-muted">You have <b>{{ total_remaining_balance }} days</b> balance leaves remaining.</p>
             <div class="row g-3 mb-3">
               <div class="col-md-12">
                 <label for="leaveType" class="form-label fw-semibold small text-muted mb-1">Leave Type <span class="text-danger">*</span></label>
@@ -145,7 +145,86 @@
     </div>
   </div>
 
+  <!-- View Modal -->
+   <div class="modal fade" id="viewLeaveModal" tabindex="-1" aria-labelledby="viewLeaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-bottom px-4 py-3">
+          <h5 class="modal-title fw-bold" id="applyLeaveModalLabel">Update Leave</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form action="/leave/update/{{ leave_id }}" method="POST" enctype="multipart/form-data">
+          <div class="modal-body p-4">
+            <div class="row g-3 mb-3">
+              <div class="col-md-12">
+                <label for="leaveType" class="form-label fw-semibold small text-muted mb-1">Leave Type <span class="text-danger">*</span></label>
+                <select class="form-select" id="leaveType" name="leaveType" value="{{ leaveType }}" required>
+                  <option value="" disabled selected>Select leave type...</option>
+                  <option value="Annual Leave">Annual Leave</option>
+                  <option value="Medical Leave">Medical Leave</option>
+                  <option value="Emergency Leave">Emergency Leave</option>
+                  <option value="Unpaid Leave">Unpaid Leave</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="startDate" class="form-label fw-semibold small text-muted mb-1">Start Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="startDate" name="startDate" value="{{ leaveStartDate }}" required>
+              </div>
+              <div class="col-md-6">
+                <label for="endDate" class="form-label fw-semibold small text-muted mb-1">End Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="endDate" name="endDate" value="{{ leaveEndDate }}" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label fw-semibold small text-muted mb-1">Reason / Description <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="description" name="description" rows="3" placeholder="Briefly state your reason for taking leave..." value="{{ leaveDescription }}" required></textarea>
+            </div>
+
+            <div class="mb-2">
+              <label for="attachment" class="form-label fw-semibold small text-muted mb-1">Supporting Document (MC, Proof, etc.)</label>
+              <input type="file" class="form-control" id="attachment" name="attachment">
+              <div class="form-text small">Accepted formats: PDF, JPG, PNG (Max 5MB).</div>
+            </div>
+
+          </div>
+          <div class="modal-footer border-top px-4 py-3 rounded-bottom-4">
+            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="deleteLeaveButton" class="btn btn-danger px-4 fw-semibold"><i class="bi bi-trash me-1"></i> Delete</button>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold"><i class="bi bi-pencil me-1"></i> Update Leave</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
   <script src="../static/js/bootstrap.bundle.min.js"></script>
   <script src="../static/js/scripts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    $("#deleteLeaveButton").click(() => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete"
+      }).then((result) => {
+        if (result.isConfirmed) Swal.fire({
+          title: "Deleted!",
+          text: "Your Leave Information has been deleted.",
+          icon: "success"
+        });
+      });
+    })
+  </script>
 </body>
 </html>
