@@ -42,6 +42,7 @@ def admin_dashboardUI():
         return redirect(url_for('index'))
     return render_template('admin-dashboard.html')
 
+# EMPLOYEE
 @app.route('/leave')
 def leaveUI():
     if 'employee_id' not in session:
@@ -81,6 +82,11 @@ def feedbackUI():
     if 'employee_id' not in session:
         return redirect(url_for('index'))
     return render_template('employee-feedback.html')
+
+# ADMIN
+@app.route('/admin/leave')
+def admin_leaveUI():
+    return render_template('admin-leave.html')
 
 @app.route('/logout')
 def logout():
