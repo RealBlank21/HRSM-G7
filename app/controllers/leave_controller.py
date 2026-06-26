@@ -1,36 +1,31 @@
 import os
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app.models.leave_model import LeaveModel
+from app.models.leave_model import Leave
 from datetime import datetime
 
 leave_bp = Blueprint('leave', __name__)
 
-# Directory for supporting document upload
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-# End of Directory for supporting document upload
 
-# Employee's Leave Dashboard
 @leave_bp.route('/leave', methods=['GET', 'POST'])
 def leaveUI():
-    # If not login, redirect to login.
     if 'employee_id' not in session:
         return redirect(url_for('auth.index'))
     
     employee_id = session['employee_id']
-    leaves = LeaveModel.get_employee_leaves(employee_id)
+    leaves = Leave.get_employee_leaves(employee_id)
     
-    # Put pending leaves at the top
     pending_leaves = [lv for lv in leaves if lv['status'] == 'Pending']
     other_leaves = [lv for lv in leaves if lv['status'] != 'Pending']
     leaves = pending_leaves + other_leaves
 
-    # Get Remaining Balance
-    total_remaining_balance = LeaveModel.check_leave_balance(leaves)
+    leave_obj = Leave()
+    leave_obj.employee_id = employee_id
+    total_remaining_balance = leave_obj.checkLeaveBalance()
 
-    # Employee Submit Leave Application
     if request.method == 'POST':
         start_date_str = request.form.get('start_date')
         end_date_str = request.form.get('end_date')
@@ -39,12 +34,10 @@ def leaveUI():
         end = datetime.strptime(end_date_str, '%Y-%m-%d')
         days_requested = (end - start).days + 1
         
-        # E-1: Insufficient Balance
         if days_requested > total_remaining_balance:
             flash('Insufficient Balance to request this leave.', 'error')
             return redirect(url_for('leave.leaveUI'))
 
-        # Attachment Upload and Save
         attachment_doc_url = None
         attachment = request.files.get('attachment')
         if attachment and attachment.filename:
@@ -54,39 +47,62 @@ def leaveUI():
             filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
             attachment.save(filepath)
             attachment_doc_url = f"/static/uploads/{unique_filename}"
-        # End of Attachment Upload and Save
 
-        data = {
-            'employee_id': employee_id,
-            'leave_type': request.form.get('leaveType'),
-            'description': request.form.get('description'),
-            'start_date': start_date_str,
-            'end_date': end_date_str,
-            'status': 'Pending',
-            'submitted_date': datetime.now().strftime('%Y-%m-%d')
-        }
-
-        if attachment_doc_url:
-            data['attachment_doc_url'] = attachment_doc_url
-
-        LeaveModel.save_leave_detail(data)
-
+        leave = Leave()
+        leave.leaveID = None
+        leave.employee_id = employee_id
+        leave.leaveType = request.form.get('leaveType')
+        leave.description = request.form.get('description')
+        leave.startDate = start_date_str
+        leave.endDate = end_date_str
+        leave.status = 'Pending'
+        leave.submittedDate = datetime.now().strftime('%Y-%m-%d')
+        leave.attachmentDocURL = attachment_doc_url
+        
+        leave.saveLeaveDetail()
+        
+        flash('Your leave has been submitted successfully.', 'success')
         return redirect(url_for('leave.leaveUI'))
     
-    return render_template('employee-leave.html', leaves=leaves, total_remaining_balance=total_remaining_balance)
+    return render_template('employee-leave.html', 
+                         leaves=leaves, 
+                         total_remaining_balance=total_remaining_balance)
 
 @leave_bp.route('/leave/update/<leave_id>', methods=['POST'])
 def update_leave(leave_id):
     if 'employee_id' not in session:
         return redirect(url_for('auth.index'))
     
-    data = {
-        'leave_type': request.form.get('leaveType'),
-        'description': request.form.get('description'),
-        'start_date': request.form.get('start_date'),
-        'end_date': request.form.get('end_date')
-    }
-
+    leaves = Leave.get_employee_leaves(session['employee_id'])
+    leave_data = None
+    for lv in leaves:
+        if lv['leave_id'] == leave_id:
+            leave_data = lv
+            break
+    
+    if not leave_data:
+        flash('Leave not found.', 'error')
+        return redirect(url_for('leave.leaveUI'))
+    
+    if leave_data['employee_id'] != session['employee_id']:
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('leave.leaveUI'))
+    
+    if leave_data['status'] != 'Pending':
+        flash('Cannot update non-pending leave.', 'error')
+        return redirect(url_for('leave.leaveUI'))
+    
+    leave = Leave()
+    leave.leaveID = leave_id
+    leave.employee_id = session['employee_id']
+    leave.leaveType = request.form.get('leaveType')
+    leave.description = request.form.get('description')
+    leave.startDate = request.form.get('start_date')
+    leave.endDate = request.form.get('end_date')
+    leave.status = 'Pending'
+    leave.submittedDate = leave_data['submitted_date']
+    leave.attachmentDocURL = leave_data.get('attachment_doc_url')
+    
     attachment = request.files.get('attachment')
     if attachment and attachment.filename:
         filename = secure_filename(attachment.filename)
@@ -94,9 +110,11 @@ def update_leave(leave_id):
         unique_filename = f"{session['employee_id']}_{timestamp}_{filename}"
         filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
         attachment.save(filepath)
-        data['attachment_doc_url'] = f"/static/uploads/{unique_filename}"
+        leave.attachmentDocURL = f"/static/uploads/{unique_filename}"
 
-    LeaveModel.update_leave_detail(leave_id, data)
+    leave.updateLeaveDetail()
+    
+    flash('Your leave has been updated successfully.', 'success')
     return redirect(url_for('leave.leaveUI'))
 
 @leave_bp.route('/leave/delete/<leave_id>', methods=['POST'])
@@ -104,7 +122,26 @@ def delete_leave(leave_id):
     if 'employee_id' not in session:
         return redirect(url_for('auth.index'))
     
-    LeaveModel.delete_leave(leave_id)
+    leaves = Leave.get_employee_leaves(session['employee_id'])
+    leave_data = None
+    for lv in leaves:
+        if lv['leave_id'] == leave_id:
+            leave_data = lv
+            break
+    
+    if not leave_data:
+        flash('Leave not found.', 'error')
+        return redirect(url_for('leave.leaveUI'))
+    
+    if leave_data['status'] != 'Pending':
+        flash('Cannot delete non-pending leave.', 'error')
+        return redirect(url_for('leave.leaveUI'))
+    
+    leave = Leave()
+    leave.leaveID = leave_id
+    leave.deleteLeave()
+    
+    flash('Your leave has been deleted successfully.', 'success')
     return redirect(url_for('leave.leaveUI'))
 
 @leave_bp.route('/admin/leave')
@@ -112,7 +149,7 @@ def admin_leaveUI():
     if 'employee_id' not in session or session.get('department') != 'HR':
         return redirect(url_for('auth.index'))
     
-    leaves = LeaveModel.get_all_leaves()
+    leaves = Leave.get_all_leaves()
     
     pending_leaves = [lv for lv in leaves if lv['status'] == 'Pending']
     other_leaves = [lv for lv in leaves if lv['status'] != 'Pending']
@@ -125,7 +162,11 @@ def admin_approve_leave(leave_id):
     if 'employee_id' not in session or session.get('department') != 'HR':
         return redirect(url_for('auth.index'))
     
-    LeaveModel.review_accept_leave(leave_id)
+    leave = Leave()
+    leave.leaveID = leave_id
+    leave.reviewAcceptLeave()
+    
+    flash('Employee leave has been approved successfully.', 'success')
     return redirect(url_for('leave.admin_leaveUI'))
 
 @leave_bp.route('/admin/leave/reject/<leave_id>', methods=['POST'])
@@ -138,6 +179,10 @@ def admin_reject_leave(leave_id):
     if not reason or not reason.strip():
         flash('Rejection reason is required.', 'error')
         return redirect(url_for('leave.admin_leaveUI'))
-
-    LeaveModel.review_reject_leave(leave_id, reason.strip())
+    
+    leave = Leave()
+    leave.leaveID = leave_id
+    leave.reviewRejectLeave(reason.strip())
+    
+    flash('Employee leave has been rejected successfully.', 'success')
     return redirect(url_for('leave.admin_leaveUI'))

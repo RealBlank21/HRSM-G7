@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app.models.employee_model import EmployeeModel
+from app.models.employee_model import Employee
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -9,14 +9,13 @@ def index():
         email = request.form.get('loginEmail')
         password = request.form.get('loginPassword')
         
-        user = EmployeeModel.verify_login(email, password)
+        employee = Employee()
+        user = employee.verify_login(email, password)
         
         if user:
-            session['employee_id'] = user['employee_id']
-            session['department'] = user['department']
-            session['staff_name'] = user['staff_name']
+            employee.set_session()
             
-            if user['department'] == 'HR':
+            if employee.is_hr():
                 return redirect(url_for('dashboard.admin_dashboardUI'))
             else:
                 return redirect(url_for('dashboard.dashboardUI'))
@@ -27,5 +26,6 @@ def index():
 
 @auth_bp.route('/logout')
 def logout():
-    session.clear()
+    employee = Employee()
+    employee.clear_session()
     return redirect(url_for('auth.index'))
