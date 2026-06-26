@@ -18,12 +18,14 @@ def leaveUI():
     employee_id = session['employee_id']
     leaves = LeaveModel.get_employee_leaves(employee_id)
     
+    # Put pending leaves at the top
     pending_leaves = [lv for lv in leaves if lv['status'] == 'Pending']
     other_leaves = [lv for lv in leaves if lv['status'] != 'Pending']
     leaves = pending_leaves + other_leaves
 
     total_remaining_balance = LeaveModel.check_leave_balance(leaves)
 
+    # Submit Leave
     if request.method == 'POST':
         start_date_str = request.form.get('start_date')
         end_date_str = request.form.get('end_date')
