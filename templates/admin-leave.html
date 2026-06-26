@@ -17,14 +17,32 @@
     {% include 'navbar.html' %}
 
     <div class="container-fluid px-3 px-lg-4 py-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Leave Management</h1>
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="searchEmployeeName" class="form-control border-start-0 ps-0" placeholder="Search by Employee Name...">
+          </div>
+        </div>
       </div>
 
       <div class="card shadow-sm mb-4">
         <div class="card-body">
+
           <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle" id="leaveTable">
               <thead class="table-light">
                 <tr>
                   <th>ID</th>
@@ -37,7 +55,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="leaveTableBody">
                 {% for leave in leaves %}
                 <tr>
                   <td>{{ leave.leave_id }}</td>
@@ -56,10 +74,9 @@
                   </td>
                   <td>{{ leave.submitted_date }}</td>
                   <td>
-                    {% if leave.status == 'Pending' %}
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#viewAdminLeaveModal{{ leave.leaveID }}">View</button>
+                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#viewAdminLeaveModal{{ leave.leave_id }}">View</button>
 
-                    <div class="modal fade" id="viewAdminLeaveModal{{ leave.leaveID }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal fade" id="viewAdminLeaveModal{{ leave.leave_id }}" tabindex="-1" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content rounded-4 border-0 shadow">
                           <div class="modal-header border-bottom px-4 py-3">
@@ -95,34 +112,51 @@
                               <textarea class="form-control bg-light" rows="3" readonly>{{ leave.description }}</textarea>
                             </div>
 
+                            {% if leave.attachment_doc_url %}
+                            <div class="mb-3">
+                              <label class="form-label fw-semibold small text-muted mb-1">Supporting Document</label><br>
+                              <a href="{{ leave.attachment_doc_url }}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-download me-1"></i> View / Download Document</a>
+                            </div>
+                            {% endif %}
+
+                            {% if leave.status == 'Pending' %}
                             <hr class="my-4">
 
-                            <form id="rejectForm{{ leave.leaveID }}" method="POST" action="{{ url_for('leave.admin_reject_leave', leave_id=leave.leaveID) }}">
+                            <form id="rejectForm{{ leave.leave_id }}" method="POST" action="{{ url_for('leave.admin_reject_leave', leave_id=leave.leave_id) }}">
                               <div class="mb-3">
-                                <label for="rejectionReason{{ leave.leaveID }}" class="form-label fw-semibold small text-muted mb-1">Reason for Rejection <span class="fw-normal">(Required if rejecting)</span></label>
-                                <textarea class="form-control" id="rejectionReason{{ leave.leaveID }}" name="rejectionReason" rows="2" placeholder="Provide a reason if you are rejecting this application..."></textarea>
+                                <label for="rejectionReason{{ leave.leave_id }}" class="form-label fw-semibold small text-muted mb-1">Reason for Rejection <span class="fw-normal">(Required if rejecting)</span></label>
+                                <textarea class="form-control" id="rejectionReason{{ leave.leave_id }}" name="rejectionReason" rows="2" placeholder="Provide a reason if you are rejecting this application..." required></textarea>
                               </div>
                             </form>
 
-                            <form id="approveForm{{ leave.leaveID }}" method="POST" action="{{ url_for('leave.admin_approve_leave', leave_id=leave.leaveID) }}"></form>
+                            <form id="approveForm{{ leave.leave_id }}" method="POST" action="{{ url_for('leave.admin_approve_leave', leave_id=leave.leave_id) }}"></form>
+                            {% endif %}
                           </div>
                           
                           <div class="modal-footer border-top px-4 py-3 rounded-bottom-4">
-                            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" form="rejectForm{{ leave.leaveID }}" class="btn btn-danger px-4 fw-semibold"><i class="bi bi-x-circle me-1"></i> Reject</button>
-                            <button type="submit" form="approveForm{{ leave.leaveID }}" class="btn btn-success px-4 fw-semibold"><i class="bi bi-check-circle me-1"></i> Approve</button>
+                            {% if leave.status == 'Pending' %}
+                              <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                              <button type="submit" form="rejectForm{{ leave.leave_id }}" class="btn btn-danger px-4 fw-semibold"><i class="bi bi-x-circle me-1"></i> Reject</button>
+                              <button type="submit" form="approveForm{{ leave.leave_id }}" class="btn btn-success px-4 fw-semibold"><i class="bi bi-check-circle me-1"></i> Approve</button>
+                            {% else %}
+                              <button type="button" class="btn btn-secondary px-4 fw-semibold" data-bs-dismiss="modal">Close</button>
+                            {% endif %}
                           </div>
                         </div>
                       </div>
                     </div>
-                    {% else %}
-                    <span class="text-muted">Reviewed</span>
-                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
+
+            <!-- No Results Message -->
+            <div id="noResults" class="text-center text-muted py-4 d-none">
+              <i class="bi bi-search fs-4 d-block mb-2"></i>
+              No employees found matching your search.
+            </div>
+
           </div>
         </div>
       </div>
@@ -131,5 +165,24 @@
 
   <script src="../static/js/bootstrap.bundle.min.js"></script>
   <script src="../static/js/scripts.js"></script>
+  <script>
+    document.getElementById('searchEmployeeName').addEventListener('input', function () {
+      const query = this.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#leaveTableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(function (row) {
+        const employeeName = row.cells[1].textContent.toLowerCase();
+        if (employeeName.includes(query)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('noResults').classList.toggle('d-none', visibleCount > 0);
+    });
+  </script>
 </body>
 </html>
