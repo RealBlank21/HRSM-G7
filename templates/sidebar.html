@@ -2,7 +2,7 @@
 
 <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
   <div class="sidebar-header d-flex align-items-center justify-content-center">
-    <a class="brand-mark" href="/dashboard" aria-label="adminHMD dashboard">
+    <a class="brand-mark" href="{{ url_for('dashboard.dashboardUI') }}" aria-label="adminHMD dashboard">
       <span class="brand-copy">
         <span class="brand-title">HRMS <span class="fw-light">EMPLOYEE</span></span>
       </span>
@@ -10,29 +10,29 @@
   </div>
 
   <nav class="sidebar-nav h-100 d-flex flex-column justify-content-between">
-      <a class="nav-link" href="/dashboard" aria-current="page">
+      <a class="nav-link" href="{{ url_for('dashboard.dashboardUI') }}" aria-current="page">
         <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
         <span class="nav-text">Dashboard</span>
       </a>
-      <a class="nav-link" href="/leave">
+      <a class="nav-link" href="{{ url_for('leave.leaveUI') }}">
         <span class="nav-icon"><i class="bi bi-calendar-x" aria-hidden="true"></i></span>
         <span class="nav-text">Leave</span>
       </a>
-      <a class="nav-link" href="/claim">
+      <a class="nav-link" href="{{ url_for('core.claimUI') }}">
         <span class="nav-icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></span>
         <span class="nav-text">Claim</span>
       </a>
-      <a class="nav-link" href="/payroll">
+      <a class="nav-link" href="{{ url_for('core.payrollUI') }}">
         <span class="nav-icon"><i class="bi bi-wallet2" aria-hidden="true"></i></span>
         <span class="nav-text">Payroll</span>
       </a>
-      <a class="nav-link" href="/feedback">
+      <a class="nav-link" href="{{ url_for('core.feedbackUI') }}">
         <span class="nav-icon"><i class="bi bi-chat-right-dots" aria-hidden="true"></i></span>
         <span class="nav-text">Feedback</span>
       </a>
 
     <div class="sidebar-footer">
-      <a href="/logout" class="nav-link w-100">
+      <a href="{{ url_for('auth.logout') }}" class="nav-link w-100">
         <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
         <span class="sidebar-footer-text">Log Out</span>
       </a>

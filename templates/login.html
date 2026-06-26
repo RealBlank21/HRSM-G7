@@ -17,9 +17,9 @@
   </button>
   <main class="auth-page">
     <section class="auth-card">
-      <a class="auth-brand" href="/dashboard"><span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span><span><strong>adminHMD</strong><small>Sign in to your admin workspace.</small></span></a>
+      <a class="auth-brand" href="{{ url_for('auth.index') }}"><span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span><span><strong>adminHMD</strong><small>Sign in to your admin workspace.</small></span></a>
       <div class="auth-visual"><img src="../static/images/png/dasher-ui-bootstrap-5.jpg" alt="adminHMD dashboard interface"></div>
-      <form method="POST" action="/" class="needs-validation" novalidate>
+      <form method="POST" action="{{ url_for('auth.index') }}" class="needs-validation" novalidate>
         <div class="mb-4">
           <p class="eyebrow mb-1">Secure Access</p>
           <h1 class="h3 mb-1">Login</h1>
