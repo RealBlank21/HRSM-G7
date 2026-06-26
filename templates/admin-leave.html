@@ -55,32 +55,61 @@
                   <td>{{ leave.submitted_date }}</td>
                   <td>
                     {% if leave.status == 'Pending' %}
-                    <div class="d-flex gap-2">
-                        <form method="POST" action="{{ url_for('leave.admin_approve_leave', leave_id=leave.leaveID) }}">
-                          <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                        </form>
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ leave.leaveID }}">Reject</button>
-                    </div>
+                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#viewAdminLeaveModal{{ leave.leaveID }}">View</button>
 
-                    <div class="modal fade" id="rejectModal{{ leave.leaveID }}" tabindex="-1" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <form method="POST" action="{{ url_for('leave.admin_reject_leave', leave_id=leave.leaveID) }}">
-                            <div class="modal-header">
-                              <h5 class="modal-title">Reject Leave</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="mb-3">
-                                <label for="rejectionReason" class="form-label">Reason for Rejection</label>
-                                <textarea class="form-control" name="rejectionReason" required></textarea>
+                    <div class="modal fade" id="viewAdminLeaveModal{{ leave.leaveID }}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content rounded-4 border-0 shadow">
+                          <div class="modal-header border-bottom px-4 py-3">
+                            <h5 class="modal-title fw-bold">Review Leave Application</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          
+                          <div class="modal-body p-4 text-start">
+                            <div class="row g-3 mb-3">
+                              <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted mb-1">Employee Name</label>
+                                <input type="text" class="form-control bg-light" value="{{ leave.employee_name }}" readonly>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted mb-1">Leave Type</label>
+                                <input type="text" class="form-control bg-light" value="{{ leave.leave_type }}" readonly>
                               </div>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                              <button type="submit" class="btn btn-danger">Confirm Reject</button>
+
+                            <div class="row g-3 mb-3">
+                              <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted mb-1">Start Date</label>
+                                <input type="date" class="form-control bg-light" value="{{ leave.start_date }}" readonly>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted mb-1">End Date</label>
+                                <input type="date" class="form-control bg-light" value="{{ leave.end_date }}" readonly>
+                              </div>
                             </div>
-                          </form>
+
+                            <div class="mb-3">
+                              <label class="form-label fw-semibold small text-muted mb-1">Description</label>
+                              <textarea class="form-control bg-light" rows="3" readonly>{{ leave.description }}</textarea>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <form id="rejectForm{{ leave.leaveID }}" method="POST" action="{{ url_for('leave.admin_reject_leave', leave_id=leave.leaveID) }}">
+                              <div class="mb-3">
+                                <label for="rejectionReason{{ leave.leaveID }}" class="form-label fw-semibold small text-muted mb-1">Reason for Rejection <span class="fw-normal">(Required if rejecting)</span></label>
+                                <textarea class="form-control" id="rejectionReason{{ leave.leaveID }}" name="rejectionReason" rows="2" placeholder="Provide a reason if you are rejecting this application..."></textarea>
+                              </div>
+                            </form>
+
+                            <form id="approveForm{{ leave.leaveID }}" method="POST" action="{{ url_for('leave.admin_approve_leave', leave_id=leave.leaveID) }}"></form>
+                          </div>
+                          
+                          <div class="modal-footer border-top px-4 py-3 rounded-bottom-4">
+                            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" form="rejectForm{{ leave.leaveID }}" class="btn btn-danger px-4 fw-semibold"><i class="bi bi-x-circle me-1"></i> Reject</button>
+                            <button type="submit" form="approveForm{{ leave.leaveID }}" class="btn btn-success px-4 fw-semibold"><i class="bi bi-check-circle me-1"></i> Approve</button>
+                          </div>
                         </div>
                       </div>
                     </div>

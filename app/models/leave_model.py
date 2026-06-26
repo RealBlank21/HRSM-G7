@@ -7,7 +7,8 @@ class LeaveModel:
         try:
             response = supabase.table('leave').select('*').eq('employee_id', employee_id).order('start_date', desc=True).execute()
             return response.data
-        except Exception:
+        except Exception as e:
+            print(e)
             return []
             
     @staticmethod
@@ -39,7 +40,8 @@ class LeaveModel:
                 lv['employee_name'] = emp_map.get(lv.get('employee_id'), 'Unknown')
                 
             return leaves
-        except Exception:
+        except Exception as e:
+            print(e)
             return []
 
     @staticmethod
@@ -47,23 +49,26 @@ class LeaveModel:
         try:
             response = supabase.table('leave').insert(data).execute()
             return response.data
-        except Exception:
+        except Exception as e:
+            print(e)
             return None
 
     @staticmethod
     def delete_leave(leave_id: str):
         try:
-            response = supabase.table('leave').delete().eq('leaveID', leave_id).execute()
+            response = supabase.table('leave').delete().eq('leave_id', leave_id).execute()
             return response.data
-        except Exception:
+        except Exception as e:
+            print(e)
             return None
 
     @staticmethod
     def update_leave_detail(leave_id: str, data: dict):
         try:
-            response = supabase.table('leave').update(data).eq('leaveID', leave_id).execute()
+            response = supabase.table('leave').update(data).eq('leave_id', leave_id).execute()
             return response.data
-        except Exception:
+        except Exception as e:
+            print(e)
             return None
 
     @staticmethod
@@ -72,4 +77,4 @@ class LeaveModel:
 
     @staticmethod
     def review_reject_leave(leave_id: str, reason: str):
-        return LeaveModel.update_leave_detail(leave_id, {'status': 'Rejected', 'rejectionReason': reason})
+        return LeaveModel.update_leave_detail(leave_id, {'status': 'Rejected', 'rejection_reason': reason})

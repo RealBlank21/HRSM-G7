@@ -27,14 +27,16 @@ def leaveUI():
 
         data = {
             'employee_id': employee_id,
-            'leaveType': request.form.get('leaveType'),
+            'leave_type': request.form.get('leaveType'),
             'description': request.form.get('description'),
             'start_date': start_date_str,
             'end_date': end_date_str,
             'status': 'Pending',
-            'submittedDate': datetime.now().strftime('%Y-%m-%d')
+            'submitted_date': datetime.now().strftime('%Y-%m-%d')
         }
+
         LeaveModel.save_leave_detail(data)
+
         return redirect(url_for('leave.leaveUI'))
     
     return render_template('employee-leave.html', leaves=leaves, total_remaining_balance=total_remaining_balance)
@@ -45,7 +47,7 @@ def update_leave(leave_id):
         return redirect(url_for('auth.index'))
     
     data = {
-        'leaveType': request.form.get('leaveType'),
+        'leave_type': request.form.get('leaveType'),
         'description': request.form.get('description'),
         'start_date': request.form.get('start_date'),
         'end_date': request.form.get('end_date')
