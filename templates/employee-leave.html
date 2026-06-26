@@ -21,7 +21,7 @@
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                   {{ message }}
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -79,6 +79,7 @@
                     </td>
                   </tr>
                   
+                  <!-- Update Leave Modal -->
                   <div class="modal fade" id="viewLeaveModal{{ leave.leave_id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                       <div class="modal-content rounded-4 border-0 shadow">
@@ -86,7 +87,7 @@
                           <h5 class="modal-title fw-bold">{% if leave.status == 'Pending' %}Update Leave{% else %}Leave Details{% endif %}</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="/leave/update/{{ leave.leave_id }}" method="POST" enctype="multipart/form-data">
+                        <form action="/leave/update/{{ leave.leave_id }}" method="POST" enctype="multipart/form-data" id="updateLeaveForm">
                           <div class="modal-body p-4">
                             <div class="row g-3 mb-3">
                               <div class="col-md-12">
@@ -270,5 +271,6 @@
         }
     });
   </script>
+
 </body>
 </html>

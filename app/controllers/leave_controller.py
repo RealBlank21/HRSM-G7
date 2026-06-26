@@ -87,6 +87,7 @@ def update_leave(leave_id):
         data['attachment_doc_url'] = f"/static/uploads/{unique_filename}"
 
     LeaveModel.update_leave_detail(leave_id, data)
+    flash('Your leave has been updated successfully.', 'success')
     return redirect(url_for('leave.leaveUI'))
 
 @leave_bp.route('/leave/delete/<leave_id>', methods=['POST'])
@@ -95,6 +96,7 @@ def delete_leave(leave_id):
         return redirect(url_for('auth.index'))
     
     LeaveModel.delete_leave(leave_id)
+    flash('Your leave has been deleted successfully.', 'success')
     return redirect(url_for('leave.leaveUI'))
 
 @leave_bp.route('/admin/leave')
@@ -116,6 +118,7 @@ def admin_approve_leave(leave_id):
         return redirect(url_for('auth.index'))
     
     LeaveModel.review_accept_leave(leave_id)
+    flash('Employee leave has been approved successfully.', 'success')
     return redirect(url_for('leave.admin_leaveUI'))
 
 @leave_bp.route('/admin/leave/reject/<leave_id>', methods=['POST'])
@@ -130,4 +133,5 @@ def admin_reject_leave(leave_id):
         return redirect(url_for('leave.admin_leaveUI'))
 
     LeaveModel.review_reject_leave(leave_id, reason.strip())
+    flash('Employee leave has been rejected successfully.', 'success')
     return redirect(url_for('leave.admin_leaveUI'))
