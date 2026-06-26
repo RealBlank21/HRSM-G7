@@ -10,21 +10,7 @@ class LeaveModel:
         except Exception as e:
             print(e)
             return []
-            
-    @staticmethod
-    def calculate_leave_balance(leaves):
-        total_allowance = 30 
-        total_used = 0
         
-        for lv in leaves:
-            if lv['status'] in ['Approved', 'Pending']:
-                start = datetime.strptime(lv['start_date'], '%Y-%m-%d')
-                end = datetime.strptime(lv['end_date'], '%Y-%m-%d')
-                days_taken = (end - start).days + 1
-                total_used += days_taken
-
-        return total_allowance - total_used
-
     @staticmethod
     def get_all_leaves():
         try:
@@ -43,6 +29,20 @@ class LeaveModel:
         except Exception as e:
             print(e)
             return []
+            
+    @staticmethod
+    def check_leave_balance(leaves):
+        total_allowance = 30 
+        total_used = 0
+        
+        for lv in leaves:
+            if lv['status'] in ['Approved', 'Pending']:
+                start = datetime.strptime(lv['start_date'], '%Y-%m-%d')
+                end = datetime.strptime(lv['end_date'], '%Y-%m-%d')
+                days_taken = (end - start).days + 1
+                total_used += days_taken
+
+        return total_allowance - total_used
 
     @staticmethod
     def save_leave_detail(data: dict):

@@ -22,7 +22,7 @@ def leaveUI():
     other_leaves = [lv for lv in leaves if lv['status'] != 'Pending']
     leaves = pending_leaves + other_leaves
 
-    total_remaining_balance = LeaveModel.calculate_leave_balance(leaves)
+    total_remaining_balance = LeaveModel.check_leave_balance(leaves)
 
     if request.method == 'POST':
         start_date_str = request.form.get('start_date')
