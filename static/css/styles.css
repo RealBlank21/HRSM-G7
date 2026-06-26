@@ -1611,9 +1611,12 @@ html[data-theme="dark"] {
   color: var(--admin-sidebar-text-strong);
 }
 
-.sidebar-nav .nav-link:hover,
-.sidebar-nav .nav-link:focus,
-.sidebar-nav .nav-link.admin-active {
+.nav-link-admin:hover {
+  background: var(--admin-theme-soft);
+  color: var(--admin-sidebar-text-strong);
+}
+
+.nav-link.admin-active {
   background: var(--admin-theme-soft);
   color: var(--admin-sidebar-text-strong);
 }
