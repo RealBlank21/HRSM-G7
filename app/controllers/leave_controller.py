@@ -6,12 +6,16 @@ from datetime import datetime
 
 leave_bp = Blueprint('leave', __name__)
 
+# Directory for supporting document upload
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+# End of Directory for supporting document upload
 
+# Employee's Leave Dashboard
 @leave_bp.route('/leave', methods=['GET', 'POST'])
 def leaveUI():
+    # If not login, redirect to login.
     if 'employee_id' not in session:
         return redirect(url_for('auth.index'))
     
@@ -23,9 +27,10 @@ def leaveUI():
     other_leaves = [lv for lv in leaves if lv['status'] != 'Pending']
     leaves = pending_leaves + other_leaves
 
+    # Get Remaining Balance
     total_remaining_balance = LeaveModel.check_leave_balance(leaves)
 
-    # Submit Leave
+    # Employee Submit Leave Application
     if request.method == 'POST':
         start_date_str = request.form.get('start_date')
         end_date_str = request.form.get('end_date')
@@ -34,10 +39,12 @@ def leaveUI():
         end = datetime.strptime(end_date_str, '%Y-%m-%d')
         days_requested = (end - start).days + 1
         
+        # E-1: Insufficient Balance
         if days_requested > total_remaining_balance:
             flash('Insufficient Balance to request this leave.', 'error')
             return redirect(url_for('leave.leaveUI'))
 
+        # Attachment Upload and Save
         attachment_doc_url = None
         attachment = request.files.get('attachment')
         if attachment and attachment.filename:
@@ -47,6 +54,7 @@ def leaveUI():
             filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
             attachment.save(filepath)
             attachment_doc_url = f"/static/uploads/{unique_filename}"
+        # End of Attachment Upload and Save
 
         data = {
             'employee_id': employee_id,
